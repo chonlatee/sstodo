@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -15,6 +16,9 @@ func main() {
 		os.Getenv("channel_secret"),
 		os.Getenv("channel_token"),
 	)
+
+	fmt.Println(os.Getenv("channel_secret"))
+	fmt.Println(os.Getenv("channel_token"))
 
 	if err != nil {
 		log.Fatalln(err)
