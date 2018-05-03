@@ -10,8 +10,8 @@ import (
 
 func main() {
 	bot, err := linebot.New(
-		os.Getenv("channel_secret"),
 		os.Getenv("channel_token"),
+		os.Getenv("channel_secret"),
 	)
 	if err != nil {
 		log.Fatal(err)
