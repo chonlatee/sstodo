@@ -1,0 +1,73 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "QeKwBtN2df+j+4stw3bQJ6yO4EY=",
+			"path": "github.com/gin-contrib/sse",
+			"revision": "22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae",
+			"revisionTime": "2017-01-09T09:34:21Z"
+		},
+		{
+			"checksumSHA1": "cpELhz30Sco7IBwvI6FyuShnjnQ=",
+			"path": "github.com/gin-gonic/gin",
+			"revision": "d459835d2b077e44f7c9b453505ee29881d5d12d",
+			"revisionTime": "2017-07-02T09:28:26Z",
+			"version": "v1.2",
+			"versionExact": "v1.2"
+		},
+		{
+			"checksumSHA1": "YVt5lqmGq95m5tFdiz5pr2BF1Jo=",
+			"path": "github.com/gin-gonic/gin/binding",
+			"revision": "d459835d2b077e44f7c9b453505ee29881d5d12d",
+			"revisionTime": "2017-07-02T09:28:26Z",
+			"version": "v1.2",
+			"versionExact": "v1.2"
+		},
+		{
+			"checksumSHA1": "M3FwiqpVbXwo9t2FyI5/gKxCDKY=",
+			"path": "github.com/gin-gonic/gin/render",
+			"revision": "d459835d2b077e44f7c9b453505ee29881d5d12d",
+			"revisionTime": "2017-07-02T09:28:26Z",
+			"version": "v1.2",
+			"versionExact": "v1.2"
+		},
+		{
+			"checksumSHA1": "Pyou8mceOASSFxc7GeXZuVdSMi0=",
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "b4deda0973fb4c70b50d226b1af49f3da59f5265",
+			"revisionTime": "2018-04-30T18:52:41Z"
+		},
+		{
+			"checksumSHA1": "w5RcOnfv5YDr3j2bd1YydkPiZx4=",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c",
+			"revisionTime": "2017-11-07T05:05:31Z"
+		},
+		{
+			"checksumSHA1": "kdas0zQNtQqfUMEMFGkUF1OcgPc=",
+			"path": "github.com/ugorji/go/codec",
+			"revision": "f3cacc17c85ecb7f1b6a9e373ee85d1480919868",
+			"revisionTime": "2018-04-07T10:30:00Z"
+		},
+		{
+			"checksumSHA1": "93Yl/rev/eILUaSVhGDxCM8v2vY=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "78d5f264b493f125018180c204871ecf58a2dce1",
+			"revisionTime": "2018-04-29T08:56:08Z"
+		},
+		{
+			"checksumSHA1": "P/k5ZGf0lEBgpKgkwy++F7K1PSg=",
+			"path": "gopkg.in/go-playground/validator.v8",
+			"revision": "5f1438d3fca68893a817e4a66806cea46a9e4ebf",
+			"revisionTime": "2017-07-30T05:02:35Z"
+		},
+		{
+			"checksumSHA1": "ZSWoOPUNRr5+3dhkLK3C4cZAQPk=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "5420a8b6744d3b0345ab293f6fcba19c978f1183",
+			"revisionTime": "2018-03-28T19:50:20Z"
+		}
+	],
+	"rootPath": "github.com/chonlatee/ssbot"
+}
