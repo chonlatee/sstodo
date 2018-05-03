@@ -36,7 +36,7 @@ func main() {
 		})
 	})
 
-	r.GET("/callback", func(c *gin.Context) {
+	r.POST("/callback", func(c *gin.Context) {
 		events, err := bot.ParseRequest(c.Request)
 		if err != nil {
 			if err == linebot.ErrInvalidSignature {
