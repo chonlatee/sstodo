@@ -16,6 +16,10 @@ func main() {
 		os.Getenv("channel_token"),
 	)
 
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	if port == "" {
 		log.Fatal("$PORT must be set")
 	}
