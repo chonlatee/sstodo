@@ -13,9 +13,8 @@ func main() {
 	port := os.Getenv("PORT")
 	bot, err := linebot.New(
 		os.Getenv("channel_secret"),
-		os.Getenv("channel_token")
+		os.Getenv("channel_token"),
 	)
-
 
 	if port == "" {
 		log.Fatal("$PORT must be set")
@@ -33,13 +32,17 @@ func main() {
 		})
 	})
 
-	r.GET("/callback", func (c *gin.Context) {
+	r.GET("/callback", func(c *gin.Context) {
 		events, err := bot.ParseRequest(c.Request)
 		if err != nil {
-			if err == linebot.ErrInvalidSignature{
-				c.Header(400, "parse error")
+			if err == linebot.ErrInvalidSignature {
+				c.JSON(400, gin.H{
+					"err": "Invalid signature error",
+				})
 			} else {
-				c.Header(500, "server error")
+				c.JSON(500, gin.H{
+					"err": "server error",
+				})
 			}
 			return
 		}
