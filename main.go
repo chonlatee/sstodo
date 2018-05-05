@@ -158,7 +158,7 @@ func main() {
 
 		if len(tokenResult.AccessToken) != 0 {
 			log.Println("redirect to dashboard")
-			session.Set("accToken", tokenResult)
+			session.Set("accToken", tokenResult.AccessToken)
 			fmt.Println(tokenResult.Scope)
 			fmt.Println(tokenResult.AccessToken)
 			fmt.Println(tokenResult.TokenType)
