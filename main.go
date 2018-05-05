@@ -35,8 +35,8 @@ func main() {
 	loginChannelSecret := os.Getenv("login_channel_secret")
 
 	bot, err := linebot.New(
-		botChannelID,
 		botChannelSecret,
+		botChannelID,
 	)
 
 	if err != nil {
