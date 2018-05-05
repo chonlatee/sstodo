@@ -56,10 +56,14 @@ func main() {
 		events, err := bot.ParseRequest(c.Request)
 		if err != nil {
 			if err == linebot.ErrInvalidSignature {
+				log.Println("400")
+				log.Println(err)
 				c.JSON(400, gin.H{
 					"err": "Invalid signature error",
 				})
 			} else {
+				log.Println("500")
+				log.Println(err)
 				c.JSON(500, gin.H{
 					"err": "server error",
 				})
@@ -82,6 +86,7 @@ func main() {
 				}
 			}
 		}
+
 	})
 
 	r.GET("/", func(c *gin.Context) {
