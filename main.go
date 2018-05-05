@@ -51,7 +51,6 @@ func main() {
 	store := cookie.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("sstodoSession", store))
 	r.Static("/assets", "./assets")
-	r.Use(gin.Logger())
 
 	r.POST("/callback", func(c *gin.Context) {
 		events, err := bot.ParseRequest(c.Request)
