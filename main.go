@@ -159,12 +159,12 @@ func main() {
 		if len(tokenResult.AccessToken) != 0 {
 			log.Println("redirect to dashboard")
 			session.Set("accToken", tokenResult.AccessToken)
+			session.Save()
 			fmt.Println(tokenResult.Scope)
 			fmt.Println(tokenResult.AccessToken)
 			fmt.Println(tokenResult.TokenType)
 			fmt.Println(tokenResult.ExpireIn)
 			fmt.Println(tokenResult.RefreshToken)
-			session.Save()
 			c.HTML(http.StatusOK, "redirect.tmpl", gin.H{
 				"msg":  "login success go to dashboard",
 				"link": "/dashboard",
@@ -183,9 +183,6 @@ func main() {
 		session := sessions.Default(c)
 		token := session.Get("accToken")
 		log.Printf("token %v\n", token)
-		if token == nil {
-			c.Redirect(301, "/")
-		}
 		c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{
 			"title": "Simple Stupid Todo",
 		})
