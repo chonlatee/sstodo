@@ -165,7 +165,10 @@ func main() {
 			fmt.Println(tokenResult.ExpireIn)
 			fmt.Println(tokenResult.RefreshToken)
 			session.Save()
-			c.Redirect(301, "/dashboard")
+			c.HTML(http.StatusOK, "redirect.tmpl", gin.H{
+				"msg":  "login success go to dashboard",
+				"link": "/dashboard",
+			})
 		}
 	})
 
