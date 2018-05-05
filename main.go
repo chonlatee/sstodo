@@ -124,6 +124,8 @@ func main() {
 			c.Redirect(301, "/loginError?err_desc="+errDesc)
 		}
 
+		log.Println("Get access token")
+
 		// Get access token
 		accessTokenURL := "https://api.line.me/"
 		resource := "v2/oauth/accessToken"
@@ -132,7 +134,7 @@ func main() {
 		data.Set("client_id", loginChannelID)
 		data.Set("client_secret", loginChannelSecret)
 		data.Set("code", code)
-		data.Set("redirect_uri", selfHost+"/auth")
+		data.Set("redirect_uri", selfHost+"/logincallback")
 
 		u, _ := url.ParseRequestURI(accessTokenURL)
 		u.Path = resource
@@ -140,7 +142,10 @@ func main() {
 		urlStr := fmt.Sprintf("%v", u)
 
 		client := &http.Client{}
-		req, _ := http.NewRequest("POST", urlStr, nil)
+		req, err := http.NewRequest("POST", urlStr, nil)
+		if err != nil {
+			log.Fatalln("parse req error", err)
+		}
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 		resp, err := client.Do(req)
 		if err != nil {
@@ -152,6 +157,7 @@ func main() {
 		json.NewDecoder(resp.Body).Decode(&tokenResult)
 
 		if len(tokenResult.AccessToken) != 0 {
+			log.Println("redirect to dashboard")
 			session.Set("accToken", tokenResult)
 			fmt.Println(tokenResult.Scope)
 			fmt.Println(tokenResult.AccessToken)
