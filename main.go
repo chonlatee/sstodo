@@ -179,6 +179,7 @@ func main() {
 	r.GET("/dashboard", func(c *gin.Context) {
 		session := sessions.Default(c)
 		token := session.Get("accToken")
+		log.Printf("token %v\n", token)
 		if token == nil {
 			c.Redirect(301, "/")
 		}
