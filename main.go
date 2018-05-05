@@ -166,7 +166,7 @@ func main() {
 			fmt.Println(tokenResult.RefreshToken)
 			c.HTML(http.StatusOK, "redirect.tmpl", gin.H{
 				"msg":  "login success go to dashboard",
-				"link": "/dashboard",
+				"link": "/todo",
 			})
 		}
 	})
@@ -178,7 +178,7 @@ func main() {
 		})
 	})
 
-	r.GET("/dashboard", func(c *gin.Context) {
+	r.GET("/todo", func(c *gin.Context) {
 		session := sessions.Default(c)
 		token := session.Get("accToken")
 		log.Printf("token %v\n", token)
