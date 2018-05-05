@@ -67,12 +67,15 @@ func main() {
 			return
 		}
 
+		log.Println("Loop in events")
+
 		for _, event := range events {
 			log.Printf("Got event %v", event)
 			fmt.Println()
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
+					log.Println("text" + message.Text)
 					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
 						log.Print(err)
 					}
