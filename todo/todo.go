@@ -78,6 +78,16 @@ func Get(id int) Todos {
 	return todo
 }
 
+// GetByUserID ...
+func GetByUserID(userID string) []Todos {
+	db := initDB()
+
+	var todos []Todos
+	db.Where("user_id = ?", userID).Find(&todos)
+
+	return todos
+}
+
 // Delete todo by id
 func Delete(id int) {
 	db := initDB()

@@ -16,30 +16,24 @@
       <thead>
         <tr>
         <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
+        <th scope="col">Task</th>
+        <th scope="col">Time</th>
+        <th scope="col">Priority</th>
+        <th scope="col">CreatedDate</th>
+        <th scope="col">UpdatedDate</th>
         </tr>
       </thead>
     <tbody>
+      {{range .todos}}
       <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
+        <th scope="row">#</th>
+        <td>{{.Title}}</td>
+        <td>{{.Time}}</td>
+        <td>{{.Priority}}</td>
+        <td>{{.CreatedDate}}</td>
+        <td>{{.UpdatedDate}}</td>
         </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-        </tr>
-        <tr>
-        <th scope="row">3</th>
-        <td>Larry</td>
-        <td>the Bird</td>
-        <td>@twitter</td>
-        </tr>
+      {{end}}
     </tbody>
     </table>
 

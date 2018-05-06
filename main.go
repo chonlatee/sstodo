@@ -130,15 +130,15 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 
 		session := sessions.Default(c)
-		userID := session.Get("uid")
+		uid := session.Get("uid")
 
-		if userID == "" {
+		if uid.(string) == "" {
 			c.HTML(http.StatusOK, "index.tmpl", gin.H{
 				"title":     "Simple Stupid Todo",
 				"linelogin": "/linelogin",
 			})
 		} else {
-			c.Redirect(302, "/todo")
+			c.Redirect(http.StatusFound, "/todos")
 			return
 		}
 
@@ -153,7 +153,7 @@ func main() {
 		lineloginURL := "https://access.line.me/dialog/oauth/weblogin" +
 			"?response_type=code&client_id=" + loginChannelID + "&redirect_uri=" + url.QueryEscape(loginCallbackURI) + "&state=" + state
 		session.Save()
-		c.Redirect(302, lineloginURL)
+		c.Redirect(http.StatusFound, lineloginURL)
 		return
 	})
 
@@ -167,11 +167,11 @@ func main() {
 		stateSes := session.Get("state")
 
 		if state != stateSes {
-			c.Redirect(302, "/loginError?err_desc=state_not_match")
+			c.Redirect(http.StatusFound, "/loginError?err_desc=state_not_match")
 		}
 
 		if len(errDesc) != 0 {
-			c.Redirect(302, "/loginError?err_desc="+errDesc)
+			c.Redirect(http.StatusFound, "/loginError?err_desc="+errDesc)
 		}
 
 		log.Println("Get access token")
@@ -242,19 +242,25 @@ func main() {
 	r.GET("/todos", func(c *gin.Context) {
 		session := sessions.Default(c)
 		uid := session.Get("uid")
+		if uid.(string) == "" {
+			c.HTML(http.StatusOK, "index.tmpl", gin.H{
+				"title":     "Simple Stupid Todo",
+				"linelogin": "/linelogin",
+			})
+		} else {
+			c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{
+				"title": "Simple Stupid Todo",
+				"todos": todo.GetByUserID(uid.(string)),
+			})
+		}
 
-		log.Println("uid", uid)
-
-		c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{
-			"title": "Simple Stupid Todo",
-		})
 	})
 
 	r.GET("/logout", func(c *gin.Context) {
 		session := sessions.Default(c)
 		session.Delete("uid")
 		session.Save()
-		c.Redirect(302, "/")
+		c.Redirect(http.StatusFound, "/")
 	})
 
 	v1 := r.Group("api/v1")
