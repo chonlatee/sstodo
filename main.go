@@ -34,9 +34,9 @@ type AcccessTokenResult struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-// Mid ...
-type Mid struct {
-	UserID string `json:"user_id"`
+// Profile
+type Profile struct {
+	UserID string `json:"userId"`
 }
 
 // Cors ...
@@ -211,10 +211,7 @@ func main() {
 
 			log.Println("access token", tokenResult.AccessToken)
 
-			mid := randomString(32)
-
-			log.Println("mid", mid)
-			getuserIDURL := "https://api.line.me/v2/bot/dedisco/migration/userId?mid=" + mid
+			getuserIDURL := "https://api.line.me/v2/profile"
 			client := &http.Client{}
 			req, _ := http.NewRequest("GET", getuserIDURL, nil)
 			req.Header.Set("Authorization", "Bearer "+tokenResult.AccessToken)
@@ -224,12 +221,12 @@ func main() {
 			}
 			defer res.Body.Close()
 
-			midVal := Mid{}
+			profile := Profile{}
 
-			json.NewDecoder(res.Body).Decode(&midVal)
+			json.NewDecoder(res.Body).Decode(&profile)
 
-			fmt.Printf("%v", midVal)
-			session.Set("uid", midVal.UserID)
+			fmt.Printf("%v", profile)
+			session.Set("uid", profile.UserID)
 			session.Save()
 			c.HTML(http.StatusOK, "redirect.tmpl", gin.H{
 				"msg":  "login success go to dashboard",
