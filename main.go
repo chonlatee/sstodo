@@ -244,7 +244,9 @@ func main() {
 		session := sessions.Default(c)
 		uid := session.Get("uid")
 
-		if uid == nil {
+		log.Println("uid", uid)
+
+		if uid == "" {
 			c.Redirect(301, "/linelogin")
 			return
 		}
