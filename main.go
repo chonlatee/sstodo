@@ -212,6 +212,8 @@ func main() {
 			log.Println("access token", tokenResult.AccessToken)
 
 			mid := randomString(32)
+
+			log.Println("mid", mid)
 			getuserIDURL := "https://api.line.me/v2/bot/dedisco/migration/userId?mid=" + mid
 			client := &http.Client{}
 			req, _ := http.NewRequest("GET", getuserIDURL, nil)
