@@ -25,12 +25,12 @@ type Todos struct {
 
 // Item ...
 type Item struct {
-	id          int
-	title       string
-	time        time.Time
-	priority    string
-	createdDate time.Time
-	updatedDate time.Time
+	ID          int
+	Title       string
+	Time        time.Time
+	Priority    string
+	CreatedDate time.Time
+	UpdatedDate time.Time
 }
 
 func dropDB() {
@@ -105,12 +105,12 @@ func GetByUserID(userID string) []Item {
 
 	for _, t := range todos {
 		newTodo := Item{
-			id:          t.ID,
-			title:       t.Title,
-			priority:    prioritys[t.Priority],
-			time:        time.Unix(t.Time, 0),
-			createdDate: time.Unix(t.CreatedDate, 0),
-			updatedDate: time.Unix(t.UpdatedDate, 0),
+			ID:          t.ID,
+			Title:       t.Title,
+			Priority:    prioritys[t.Priority],
+			Time:        time.Unix(t.Time, 0),
+			CreatedDate: time.Unix(t.CreatedDate, 0),
+			UpdatedDate: time.Unix(t.UpdatedDate, 0),
 		}
 		newTodos = append(newTodos, newTodo)
 	}

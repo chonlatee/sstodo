@@ -223,7 +223,7 @@ func main() {
 			session.Save()
 			c.HTML(http.StatusOK, "redirect.tmpl", gin.H{
 				"msg":  "login success go to dashboard",
-				"link": "/todo",
+				"link": "/todos",
 			})
 		}
 	})
