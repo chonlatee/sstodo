@@ -132,7 +132,7 @@ func main() {
 		session := sessions.Default(c)
 		userID := session.Get("uid")
 
-		if userID == nil {
+		if userID == "" {
 			c.HTML(http.StatusOK, "index.tmpl", gin.H{
 				"title":     "Simple Stupid Todo",
 				"linelogin": "/linelogin",
