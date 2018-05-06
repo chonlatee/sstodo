@@ -34,7 +34,7 @@ type AcccessTokenResult struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-// Profile
+// Profile ...
 type Profile struct {
 	UserID string `json:"userId"`
 }
@@ -138,7 +138,7 @@ func main() {
 				"linelogin": "/linelogin",
 			})
 		} else {
-			c.Redirect(301, "/todo")
+			c.Redirect(302, "/todo")
 			return
 		}
 
@@ -153,7 +153,7 @@ func main() {
 		lineloginURL := "https://access.line.me/dialog/oauth/weblogin" +
 			"?response_type=code&client_id=" + loginChannelID + "&redirect_uri=" + url.QueryEscape(loginCallbackURI) + "&state=" + state
 		session.Save()
-		c.Redirect(301, lineloginURL)
+		c.Redirect(302, lineloginURL)
 		return
 	})
 
@@ -167,11 +167,11 @@ func main() {
 		stateSes := session.Get("state")
 
 		if state != stateSes {
-			c.Redirect(301, "/loginError?err_desc=state_not_match")
+			c.Redirect(302, "/loginError?err_desc=state_not_match")
 		}
 
 		if len(errDesc) != 0 {
-			c.Redirect(301, "/loginError?err_desc="+errDesc)
+			c.Redirect(302, "/loginError?err_desc="+errDesc)
 		}
 
 		log.Println("Get access token")
@@ -239,7 +239,7 @@ func main() {
 		})
 	})
 
-	r.GET("/todo", func(c *gin.Context) {
+	r.GET("/todos", func(c *gin.Context) {
 		session := sessions.Default(c)
 		uid := session.Get("uid")
 
@@ -254,7 +254,7 @@ func main() {
 		session := sessions.Default(c)
 		session.Delete("uid")
 		session.Save()
-		c.Redirect(301, "/")
+		c.Redirect(302, "/")
 	})
 
 	v1 := r.Group("api/v1")
