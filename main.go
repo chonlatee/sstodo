@@ -225,7 +225,7 @@ func main() {
 
 			json.NewDecoder(res.Body).Decode(&profile)
 
-			fmt.Printf("%v", profile)
+			fmt.Println("user id", profile.UserID)
 			session.Set("uid", profile.UserID)
 			session.Save()
 			c.HTML(http.StatusOK, "redirect.tmpl", gin.H{
