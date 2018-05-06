@@ -4,16 +4,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
+	"time"
 
+	"github.com/chonlatee/ssbot/todo"
 	"github.com/dchest/uniuri"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
+
+var r *rand.Rand
+
+func init() {
+	r = rand.New(rand.NewSource(time.Now().UnixNano()))
+}
 
 // AcccessTokenResult ...
 type AcccessTokenResult struct {
@@ -24,10 +34,26 @@ type AcccessTokenResult struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+// Mid ...
+type Mid struct {
+	UserID string `json:"user_id"`
+}
+
+// Cors ...
+func Cors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Add("Access-Control-Allow-Origin", "*")
+		c.Next()
+	}
+}
+
 func main() {
 
 	port := os.Getenv("PORT")
-	selfHost := "https://ssbotline.herokuapp.com"
+	selfHost := os.Getenv("self_host")
+	if selfHost == "" {
+		selfHost = "https://ssbotline.herokuapp.com"
+	}
 
 	botChannelID := os.Getenv("bot_channel_id")
 	botChannelSecret := os.Getenv("bot_channel_secret")
@@ -50,6 +76,7 @@ func main() {
 	r.LoadHTMLGlob("templates/*")
 	store := cookie.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("sstodoSession", store))
+	r.Use(Cors())
 	r.Static("/assets", "./assets")
 
 	r.POST("/callback", func(c *gin.Context) {
@@ -79,9 +106,19 @@ func main() {
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					log.Println("text: " + message.Text)
-					log.Println(event.ReplyToken)
-					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(message.Text)).Do(); err != nil {
+					var replyMsg string
+					if strings.ToLower(message.Text) == "edit" {
+						replyMsg = selfHost
+					} else {
+						err := todo.Save(event.Source.UserID, message.Text)
+						if err != nil {
+							replyMsg = err.Error()
+						} else {
+							replyMsg = "Save success"
+						}
+					}
+
+					if _, err = bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage(replyMsg)).Do(); err != nil {
 						log.Print(err)
 					}
 				}
@@ -91,16 +128,20 @@ func main() {
 	})
 
 	r.GET("/", func(c *gin.Context) {
-		// get access token from session
-		// if no access token redirect to line login url
-		// if access token exist and not expire
-		// if access token expire use refresh token for get new access token
-		// but in line docs i did't see how to revoke access token with refresh token
 
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{
-			"title":     "Simple Stupid Todo",
-			"linelogin": "/linelogin",
-		})
+		session := sessions.Default(c)
+		userID := session.Get("uid")
+
+		if userID == nil {
+			c.HTML(http.StatusOK, "index.tmpl", gin.H{
+				"title":     "Simple Stupid Todo",
+				"linelogin": "/linelogin",
+			})
+		} else {
+			c.Redirect(301, "/todo")
+			return
+		}
+
 	})
 
 	r.GET("/linelogin", func(c *gin.Context) {
@@ -113,6 +154,7 @@ func main() {
 			"?response_type=code&client_id=" + loginChannelID + "&redirect_uri=" + url.QueryEscape(loginCallbackURI) + "&state=" + state
 		session.Save()
 		c.Redirect(301, lineloginURL)
+		return
 	})
 
 	r.GET("/logincallback", func(c *gin.Context) {
@@ -166,13 +208,24 @@ func main() {
 
 		if len(tokenResult.AccessToken) != 0 {
 			log.Println("redirect to dashboard")
-			session.Set("accToken", tokenResult.AccessToken)
+
+			mid := randomString(32)
+			getuserIDURL := "https://api.line.me/v2/bot/dedisco/migration/userId?mid=" + mid
+			client := &http.Client{}
+			req, _ := http.NewRequest("GET", getuserIDURL, nil)
+			req.Header.Set("Authorization", "Bearer "+tokenResult.AccessToken)
+			res, err := client.Do(req)
+			if err != nil {
+				log.Fatalln("get user id error")
+			}
+			defer res.Body.Close()
+
+			midVal := Mid{}
+
+			json.NewDecoder(res.Body).Decode(&midVal)
+
+			session.Set("uid", midVal.UserID)
 			session.Save()
-			fmt.Println(tokenResult.Scope)
-			fmt.Println(tokenResult.AccessToken)
-			fmt.Println(tokenResult.TokenType)
-			fmt.Println(tokenResult.ExpireIn)
-			fmt.Println(tokenResult.RefreshToken)
 			c.HTML(http.StatusOK, "redirect.tmpl", gin.H{
 				"msg":  "login success go to dashboard",
 				"link": "/todo",
@@ -189,8 +242,14 @@ func main() {
 
 	r.GET("/todo", func(c *gin.Context) {
 		session := sessions.Default(c)
-		token := session.Get("accToken")
-		log.Printf("token %v\n", token)
+		uid := session.Get("uid")
+
+		if uid == nil {
+			c.Redirect(301, "/linelogin")
+			return
+		}
+
+		log.Printf("uid %v\n", uid)
 		c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{
 			"title": "Simple Stupid Todo",
 		})
@@ -198,49 +257,52 @@ func main() {
 
 	r.GET("/logout", func(c *gin.Context) {
 		session := sessions.Default(c)
-		session.Delete("accToken")
+		session.Delete("uid")
 		session.Save()
 		c.Redirect(301, "/")
 	})
 
-	// 	// router for manage todo
-	// 	// r.POST("/todo", func(c *gin.Context) {
+	v1 := r.Group("api/v1")
+	{
+		v1.POST("/todos", postTodo)
 
-	// 	// })
+		v1.GET("/todos", getTodos)
 
-	// 	// r.GET("/todo", func(c *gin.Context) {
+		v1.GET("/todos/:id", getTodo)
 
-	// 	// })
+		v1.PUT("/todos/:id", updateTodo)
 
-	// 	// r.GET("/todo/:id", func(c *gin.Context) {
+		v1.DELETE("/todos/:id", deleteTodo)
 
-	// 	// })
+	}
 
 	r.Run(":" + port)
 }
 
-// // create function for split message
-// // create database database for save todo
-// // use mongo for store data
-// // create template for edit todo
-// func splitMessage(msg string) {
-// 	msgSplit := strings.Split(msg, ":")
+func postTodo(c *gin.Context) {
+}
 
-// 	if len(msgSplit) < 2 {
-// 		log.Fatalln("invalid format")
-// 		return
-// 	}
+func getTodos(c *gin.Context) {
 
-// 	if len(msgSplit) > 4 {
-// 		log.Fatalln("invalid format")
-// 		return
-// 	}
+}
 
-// 	if len(msgSplit) == 2 {
-// 		fmt.Println("set detault time")
-// 	}
+func getTodo(c *gin.Context) {
 
-// 	if len(msgSplit) == 3 {
-// 		fmt.Println("set task todo")
-// 	}
-// }
+}
+
+func updateTodo(c *gin.Context) {
+
+}
+
+func deleteTodo(c *gin.Context) {
+
+}
+
+func randomString(strlen int) string {
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	result := make([]byte, strlen)
+	for i := range result {
+		result[i] = chars[r.Intn(len(chars))]
+	}
+	return string(result)
+}
