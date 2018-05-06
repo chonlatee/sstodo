@@ -23,6 +23,16 @@ type Todos struct {
 	UserID      string `gorm:"not null" form:"user_id" json:"user_id"`
 }
 
+// Item ...
+type Item struct {
+	id          int
+	title       string
+	time        time.Time
+	priority    string
+	createdDate time.Time
+	updatedDate time.Time
+}
+
 func dropDB() {
 	db, err := gorm.Open("sqlite3", "./todo.db")
 	if err != nil {
@@ -79,13 +89,33 @@ func Get(id int) Todos {
 }
 
 // GetByUserID ...
-func GetByUserID(userID string) []Todos {
+func GetByUserID(userID string) []Item {
 	db := initDB()
 
 	var todos []Todos
-	db.Where("user_id = ?", userID).Find(&todos)
+	db.Where("user_id = ?", userID).Order("priority asc").Find(&todos)
 
-	return todos
+	newTodos := []Item{}
+
+	prioritys := make(map[int8]string)
+	prioritys[0] = "important"
+	prioritys[1] = "high"
+	prioritys[2] = "medium"
+	prioritys[3] = "low"
+
+	for _, t := range todos {
+		newTodo := Item{
+			id:          t.ID,
+			title:       t.Title,
+			priority:    prioritys[t.Priority],
+			time:        time.Unix(t.Time, 0),
+			createdDate: time.Unix(t.CreatedDate, 0),
+			updatedDate: time.Unix(t.UpdatedDate, 0),
+		}
+		newTodos = append(newTodos, newTodo)
+	}
+
+	return newTodos
 }
 
 // Delete todo by id
