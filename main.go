@@ -209,8 +209,6 @@ func main() {
 		if len(tokenResult.AccessToken) != 0 {
 			log.Println("redirect to dashboard")
 
-			log.Println("access token", tokenResult.AccessToken)
-
 			getuserIDURL := "https://api.line.me/v2/profile"
 			client := &http.Client{}
 			req, _ := http.NewRequest("GET", getuserIDURL, nil)
@@ -225,7 +223,6 @@ func main() {
 
 			json.NewDecoder(res.Body).Decode(&profile)
 
-			fmt.Println("user id", profile.UserID)
 			session.Set("uid", profile.UserID)
 			session.Save()
 			c.HTML(http.StatusOK, "redirect.tmpl", gin.H{
@@ -248,12 +245,6 @@ func main() {
 
 		log.Println("uid", uid)
 
-		if uid == "" {
-			c.Redirect(301, "/linelogin")
-			return
-		}
-
-		log.Printf("uid %v\n", uid)
 		c.HTML(http.StatusOK, "dashboard.tmpl", gin.H{
 			"title": "Simple Stupid Todo",
 		})
