@@ -209,6 +209,8 @@ func main() {
 		if len(tokenResult.AccessToken) != 0 {
 			log.Println("redirect to dashboard")
 
+			log.Println("access token", tokenResult.AccessToken)
+
 			mid := randomString(32)
 			getuserIDURL := "https://api.line.me/v2/bot/dedisco/migration/userId?mid=" + mid
 			client := &http.Client{}
