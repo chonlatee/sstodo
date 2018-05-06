@@ -224,6 +224,7 @@ func main() {
 
 			json.NewDecoder(res.Body).Decode(&midVal)
 
+			fmt.Printf("%v", midVal)
 			session.Set("uid", midVal.UserID)
 			session.Save()
 			c.HTML(http.StatusOK, "redirect.tmpl", gin.H{
