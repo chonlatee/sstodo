@@ -16,11 +16,13 @@
       <thead>
         <tr>
         <th scope="col">#</th>
-        <th scope="col">Task</th>
+        <th scope="col">Title</th>
         <th scope="col">Time</th>
-        <th scope="col">Priority</th>
         <th scope="col">CreatedDate</th>
         <th scope="col">UpdatedDate</th>
+        <th scope="col">Priority</th>
+        <th scope="col">Status</th>
+        <th scope="col">Edit</th>
         </tr>
       </thead>
     <tbody>
@@ -29,13 +31,14 @@
           <th scope="row">#</th>
           <td>{{.Title}}</td>
           <td>{{.Time}}</td>
-          <td>{{.Priority}}</td>
           <td>{{.CreatedDate}}</td>
           <td>{{.UpdatedDate}}</td>
+          <td>{{.Priority}}</td>
+          <td>{{.Status}}</td>
+          <td><a href="/edit/{{.ID}}">Edit</a></td>
         </tr>
       {{end}}
     </tbody>
     </table>
-
   </body>
 </html>

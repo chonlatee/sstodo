@@ -21,6 +21,7 @@ type Todos struct {
 	CreatedDate int64  `gorm:"not null" form:"created_date" json:"created_date"`
 	UpdatedDate int64  `gorm:"not null" form:"updated_date" json:"updated_date"`
 	UserID      string `gorm:"not null" form:"user_id" json:"user_id"`
+	Status      int8   `gorm:"not null" form:"status" json:"status"`
 }
 
 // Item ...
@@ -31,6 +32,19 @@ type Item struct {
 	Priority    string
 	CreatedDate time.Time
 	UpdatedDate time.Time
+	Status      string
+}
+
+var status = map[int8]string{
+	0: "Complete",
+	1: "In complete",
+	3: "Cancel",
+}
+var prioritys = map[int8]string{
+	0: "important",
+	1: "high",
+	2: "medium",
+	3: "low",
 }
 
 func dropDB() {
@@ -97,18 +111,13 @@ func GetByUserID(userID string) []Item {
 
 	newTodos := []Item{}
 
-	prioritys := make(map[int8]string)
-	prioritys[0] = "important"
-	prioritys[1] = "high"
-	prioritys[2] = "medium"
-	prioritys[3] = "low"
-
 	for _, t := range todos {
 		newTodo := Item{
 			ID:          t.ID,
 			Title:       t.Title,
 			Priority:    prioritys[t.Priority],
 			Time:        time.Unix(t.Time, 0),
+			Status:      status[t.Status],
 			CreatedDate: time.Unix(t.CreatedDate, 0),
 			UpdatedDate: time.Unix(t.UpdatedDate, 0),
 		}
@@ -167,6 +176,7 @@ func parseText(text string) (Todos, error) {
 		Time:        taskTime.Unix(),
 		CreatedDate: time.Now().Unix(),
 		UpdatedDate: time.Now().Unix(),
+		Status:      1,
 	}
 
 	return todo, nil

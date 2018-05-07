@@ -70,6 +70,15 @@ func Get(userID string) Users {
 	return user
 }
 
+// GetAll users
+func GetAll() []Users {
+	db := initDB()
+	var users []Users
+	db.Find(&users)
+
+	return users
+}
+
 // DropDB for remove all record
 func DropDB() {
 	dropDB()

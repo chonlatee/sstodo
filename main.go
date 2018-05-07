@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/chonlatee/ssbot/todo"
 	"github.com/dchest/uniuri"
@@ -18,12 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
-
-var r *rand.Rand
-
-func init() {
-	r = rand.New(rand.NewSource(time.Now().UnixNano()))
-}
 
 // AcccessTokenResult ...
 type AcccessTokenResult struct {
@@ -259,47 +251,13 @@ func main() {
 		c.Redirect(http.StatusFound, "/")
 	})
 
-	v1 := r.Group("api/v1")
-	{
-		v1.POST("/todos", postTodo)
+	// if we have a lot of user we have to use redis cronJob system
 
-		v1.GET("/todos", getTodos)
-
-		v1.GET("/todos/:id", getTodo)
-
-		v1.PUT("/todos/:id", updateTodo)
-
-		v1.DELETE("/todos/:id", deleteTodo)
-
-	}
+	// users := users.GetAll()
+	// for _, u := range users {
+	// 	go func(userID string) {
+	// 	}(u.UserID)
+	// }
 
 	r.Run(":" + port)
-}
-
-func postTodo(c *gin.Context) {
-}
-
-func getTodos(c *gin.Context) {
-
-}
-
-func getTodo(c *gin.Context) {
-
-}
-
-func updateTodo(c *gin.Context) {
-
-}
-
-func deleteTodo(c *gin.Context) {
-
-}
-
-func randomString(strlen int) string {
-	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
-	result := make([]byte, strlen)
-	for i := range result {
-		result[i] = chars[r.Intn(len(chars))]
-	}
-	return string(result)
 }
