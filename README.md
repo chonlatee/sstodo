@@ -15,3 +15,10 @@ Not implement
 - Cronjob for send Daily report
 - Edit todo
 - Revoke access token when access token is expired.
+
+
+
+but if you want to try you can add bot at 
+
+
+![alt tag](https://qr-official.line.me/M/ddUbVTrq7G.png)
