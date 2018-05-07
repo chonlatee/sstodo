@@ -21,4 +21,4 @@ Not implement
 but if you want to try you can add bot at 
 
 
-![alt tag](https://qr-official.line.me/M/ddUbVTrq7G.png)
+![ddubvtrq7g](https://user-images.githubusercontent.com/324432/39685521-575f04bc-51ed-11e8-91a5-6ee095d36ea6.png)
